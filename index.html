@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#061426">
+<title>Dein Weg</title>
+<style>
+  :root {
+    --bg: #061426;
+    --card: rgba(255,255,255,0.045);
+    --card-border: rgba(255,255,255,0.09);
+    --line: #173c63;
+    --ink: #edf7ff;
+    --ink-dim: #a9c6e4;
+    --ink-faint: #7194b8;
+    --gold: #69baff;
+    --rgb-1: #2e8bff;
+    --rgb-2: #1769d2;
+    --rgb-3: #52c8ff;
+    --rgb-4: #3a9dff;
+    --rgb-5: #a4e5ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .bg-fx { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+  .bg-fx::before, .bg-fx::after {
+    content: "";
+    position: absolute;
+    width: 62vmax; height: 62vmax;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .3;
+  }
+  .bg-fx::before { background: radial-gradient(circle, var(--rgb-2), transparent 70%); top: -24%; left: -16%; }
+  .bg-fx::after { background: radial-gradient(circle, var(--rgb-3), transparent 70%); bottom: -26%; right: -18%; }
+  @media (prefers-reduced-motion: no-preference) {
+    .bg-fx::before { animation: float1 20s ease-in-out infinite; }
+    .bg-fx::after { animation: float2 24s ease-in-out infinite; }
+  }
+  @keyframes float1 { 0%,100%{ transform: translate(0,0) scale(1);} 50%{ transform: translate(6%,8%) scale(1.12);} }
+  @keyframes float2 { 0%,100%{ transform: translate(0,0) scale(1);} 50%{ transform: translate(-6%,-10%) scale(1.15);} }
+
+  .screen { min-height: 100vh; }
+  .screen.hidden { display: none; }
+  .page { max-width: 560px; margin: 0 auto; padding: 56px 24px 80px; }
+
+  .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 700; color: var(--rgb-3); margin-bottom: 10px; }
+  .eyebrow.gold { color: var(--gold); }
+
+  h1 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-weight: 400; font-size: 1.6rem; color: var(--ink); margin-bottom: 28px; line-height: 1.3;
+  }
+
+  .brand {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-weight: 400; font-size: 1.3rem; color: var(--ink-dim); margin-bottom: 44px;
+  }
+
+  .back-btn {
+    background: none; border: none; color: var(--ink-dim);
+    font-size: .95rem; padding: 0; margin-bottom: 28px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
+  }
+  .back-btn:hover, .back-btn:focus-visible { color: var(--ink); }
+
+  .menu { display: flex; flex-direction: column; gap: 18px; }
+  .menu-card {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    width: 100%; text-align: left; padding: 28px 24px; border-radius: 22px;
+    background: var(--card); border: 1px solid var(--card-border);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    color: var(--ink); font-family: inherit; cursor: pointer;
+    transition: transform .2s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .menu-card:active { transform: scale(.97); }
+  .menu-card .menu-title { font-size: 1.35rem; font-weight: 700; }
+  .menu-card .menu-sub { color: var(--ink-dim); font-size: .95rem; }
+  .menu-card.c-therapie:hover, .menu-card.c-therapie:focus-visible {
+    border-color: rgba(105,186,255,.55); box-shadow: 0 0 0 1px rgba(105,186,255,.25), 0 16px 40px rgba(105,186,255,.2); background: rgba(105,186,255,.07);
+  }
+  .menu-card.c-motivation:hover, .menu-card.c-motivation:focus-visible {
+    border-color: rgba(82,200,255,.55); box-shadow: 0 0 0 1px rgba(82,200,255,.25), 0 16px 40px rgba(82,200,255,.2); background: rgba(82,200,255,.07);
+  }
+
+  .hero { position: relative; margin-bottom: 36px; }
+  .hero-number {
+    font-weight: 800; font-size: clamp(4.2rem, 25vw, 6.5rem); line-height: 1; font-variant-numeric: tabular-nums;
+    background: linear-gradient(135deg, #fff 0%, var(--rgb-3) 55%, var(--rgb-2) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 26px rgba(23,105,210,.4));
+  }
+  .hero-number.gold {
+    background: linear-gradient(135deg, #fff 0%, var(--gold) 70%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 22px rgba(105,186,255,.35));
+  }
+  .hero-caption { margin-top: 8px; font-size: .95rem; color: var(--ink-dim); }
+
+  .rgb-slider { margin: 8px 0 44px; }
+  .rgb-track {
+    position: relative; height: 18px; border-radius: 999px; background: #030b16;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 2px 8px rgba(0,0,0,.55);
+  }
+  .rgb-fill {
+    position: absolute; top: 0; left: 0; height: 100%; width: 0%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--rgb-1), var(--rgb-2), var(--rgb-3), var(--rgb-4), var(--rgb-5), var(--rgb-1));
+    background-size: 300% 100%;
+    box-shadow: 0 0 16px rgba(23,105,210,.6), 0 0 32px rgba(82,200,255,.35);
+  }
+  @media (prefers-reduced-motion: no-preference) { .rgb-fill { animation: rgbShift 5s linear infinite; } }
+  @keyframes rgbShift { to { background-position: 300% 50%; } }
+  .rgb-dot {
+    position: absolute; top: 50%; left: 0%; width: 26px; height: 26px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 4px rgba(255,255,255,.14), 0 0 20px 4px rgba(23,105,210,.85);
+    transform: translate(-50%,-50%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rgb-fill, .rgb-dot { transition: left 1.1s cubic-bezier(.4,0,.2,1), width 1.1s cubic-bezier(.4,0,.2,1); }
+  }
+  .rgb-labels { display: flex; justify-content: space-between; margin-top: 14px; font-size: .78rem; color: var(--ink-dim); }
+  .rgb-pct { margin-top: 6px; font-size: .78rem; color: var(--ink-faint); text-align: right; }
+
+  .divider { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+
+  .section-title {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-weight: 400; font-size: 1.15rem; margin-bottom: 18px;
+  }
+
+  .ledgers { display: flex; flex-direction: column; gap: 36px; }
+  .ledger-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--line); font-size: .98rem; }
+  .ledger-row:last-child { border-bottom: 1px solid var(--line); }
+  .ledger-row .value { font-variant-numeric: tabular-nums; color: var(--ink); }
+  .ledger-row .label { color: var(--ink-dim); }
+  @media (min-width: 560px) { .ledgers { flex-direction: row; } .ledgers > div { flex: 1; } }
+
+  .msg-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-radius: 22px; padding: 32px 26px;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 1.25rem; line-height: 1.55; min-height: 150px;
+    display: flex; align-items: center;
+    box-shadow: 0 0 50px rgba(82,200,255,.12);
+    margin: 4px 0 16px;
+  }
+  .msg-next-btn {
+    width: 100%; padding: 17px; border-radius: 16px; border: none;
+    background: linear-gradient(135deg, var(--rgb-2), var(--rgb-3));
+    color: #030b16; font-weight: 700; font-size: 1rem; font-family: inherit; cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+    box-shadow: 0 10px 28px rgba(23,105,210,.35);
+  }
+  .msg-next-btn:active { transform: scale(.97); }
+
+  .quotes { display: flex; flex-direction: column; }
+  .quote {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 1.05rem; line-height: 1.6; padding: 22px 0; border-top: 1px solid var(--line); max-width: 48ch;
+  }
+  .quotes .quote:last-child { border-bottom: 1px solid var(--line); }
+
+  footer { margin-top: 48px; font-size: .85rem; color: var(--ink-dim); line-height: 1.6; max-width: 40ch; }
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+
+<div class="screen" id="screenStart">
+  <div class="page">
+    <h1 class="brand">Dein Weg</h1>
+    <div class="menu">
+      <button class="menu-card c-therapie" data-target="screenTherapie">
+        <span class="menu-title">Therapie</span>
+        <span class="menu-sub">Das hab ich hinter mir</span>
+      </button>
+      <button class="menu-card c-motivation" data-target="screenMotivation">
+        <span class="menu-title">Motivation</span>
+        <span class="menu-sub">Ist der Rückfall es wert?</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="screen hidden" id="screenTherapie">
+  <div class="page">
+    <button class="back-btn" data-target="screenStart">← Zurück</button>
+    <div class="eyebrow gold">Therapie</div>
+    <h1 id="therapieTitle">Das hab ich hinter mir</h1>
+
+    <div class="hero">
+      <div class="hero-number gold" id="heroNumber">0</div>
+      <div class="hero-caption" id="heroCaption">Tage seit dem 25.08.2026</div>
+    </div>
+
+    <div class="rgb-slider">
+      <div class="rgb-track">
+        <div class="rgb-fill" id="pathFill"></div>
+        <div class="rgb-dot" id="pathMarker"></div>
+      </div>
+      <div class="rgb-labels">
+        <span id="rehaStartLabel">25.08.2026</span>
+        <span id="rehaEndLabel">03.02.2027</span>
+      </div>
+      <div class="rgb-pct" id="rehaPct">0% geschafft</div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="ledgers">
+      <div>
+        <div class="section-title">Bereits geschafft</div>
+        <div class="ledger-row"><span class="label">Tage</span><span class="value" id="elDays">–</span></div>
+        <div class="ledger-row"><span class="label">Wochen</span><span class="value" id="elWeeks">–</span></div>
+        <div class="ledger-row"><span class="label">Monate</span><span class="value" id="elMonths">–</span></div>
+      </div>
+      <div>
+        <div class="section-title">Noch bis zum Ende</div>
+        <div class="ledger-row"><span class="label">Tage</span><span class="value" id="reDays">–</span></div>
+        <div class="ledger-row"><span class="label">Wochen</span><span class="value" id="reWeeks">–</span></div>
+        <div class="ledger-row"><span class="label">Monate</span><span class="value" id="reMonths">–</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen hidden" id="screenMotivation">
+  <div class="page">
+    <button class="back-btn" data-target="screenStart">← Zurück</button>
+    <div class="eyebrow">Motivation</div>
+    <h1>Ist der Rückfall es wert?</h1>
+
+    <div class="hero">
+      <div class="hero-number" id="cleanNumber">0</div>
+      <div class="hero-caption" id="cleanCaption">Tage clean seit dem 25.08.2026</div>
+    </div>
+
+    <div class="msg-card" id="motivationCard">...</div>
+    <button class="msg-next-btn" id="nextMessageBtn">Zeig mir noch einen Grund</button>
+
+    <hr class="divider">
+
+    <div class="section-title">Warum du bleibst</div>
+    <div class="quotes">
+      <p class="quote">Du bist nicht schwach, weil du Hilfe brauchst – du bist mutig, weil du sie annimmst.</p>
+      <p class="quote">Jeder Tag, den du bleibst, ist ein Tag, an dem du dich für dich entscheidest.</p>
+      <p class="quote">Ein Rückfall beginnt selten beim ersten Konsum. Er beginnt beim Gedanken: „Ich schaffe den Rest allein."</p>
+      <p class="quote">Du musst nicht alle fünf Monate auf einmal schaffen. Nur den heutigen Tag.</p>
+      <p class="quote">Was du hier lernst, kann dir niemand mehr wegnehmen – auch an einem schlechten Tag nicht.</p>
+      <p class="quote">Die Menschen, die dich vermissen, wollen dich gesund zurück. Nicht schnell zurück.</p>
+      <p class="quote">Ein harter Moment ist ein Moment. Keine Vorhersage für den Rest deines Lebens.</p>
+      <p class="quote">Du hast schon etwas geschafft, das viele nie versuchen. Aufhören wäre der einzige Weg, es wieder zu verlieren.</p>
+      <p class="quote">Abbrechen macht das Problem nicht kleiner – es macht nur den Weg zu dem Leben, das du willst, länger.</p>
+      <p class="quote">Nicht jeder Tag hier fühlt sich gut an. Aber jeder einzelne bringt dich näher an das Leben, das du eigentlich willst.</p>
+    </div>
+
+    <footer>
+      An schweren Tagen hilft ein Gespräch mit deiner Gruppe oder Betreuung oft mehr, als es sich in dem Moment anfühlt.
+    </footer>
+  </div>
+</div>
+
+<script>
+(function () {
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.add('hidden'); });
+    document.getElementById(id).classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-target]').forEach(function (el) {
+    el.addEventListener('click', function () { showScreen(el.getAttribute('data-target')); });
+  });
+
+  function fmt1(n) { return n.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+  function fmtDate(d) { return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); }
+  function daysBetween(a, b) { return Math.floor((b - a) / 86400000); }
+  function formatClean(days) {
+    if (days <= 0) return 'heute';
+    if (days === 1) return '1 Tag';
+    if (days < 21) return days + ' Tage';
+    var weeks = Math.floor(days / 7);
+    if (days < 70) return weeks + ' Wochen';
+    var months = Math.floor(days / 30.44);
+    return months === 1 ? '1 Monat' : months + ' Monate';
+  }
+
+  /* Therapie: Reha-Beginn am 25.08.2026; Entgiftungsbeginn ebenfalls am 25.08.2026 */
+  var rehaStart = new Date(2026, 7, 25);
+  var rehaEnd = new Date(2027, 1, 3);
+
+  function renderTherapie() {
+    var now = new Date();
+    var totalDays = Math.round((rehaEnd - rehaStart) / 86400000);
+    var elapsedDays = Math.max(0, Math.min(totalDays, daysBetween(rehaStart, now)));
+    var remainingDays = Math.max(0, totalDays - elapsedDays);
+
+    document.getElementById('heroNumber').textContent = elapsedDays;
+    document.getElementById('heroCaption').textContent = 'Tage seit dem ' + fmtDate(rehaStart);
+    document.getElementById('elDays').textContent = elapsedDays;
+    document.getElementById('elWeeks').textContent = fmt1(elapsedDays / 7);
+    document.getElementById('elMonths').textContent = fmt1(elapsedDays / 30.44);
+    document.getElementById('reDays').textContent = remainingDays;
+    document.getElementById('reWeeks').textContent = fmt1(remainingDays / 7);
+    document.getElementById('reMonths').textContent = fmt1(remainingDays / 30.44);
+
+    document.getElementById('rehaStartLabel').textContent = fmtDate(rehaStart);
+    document.getElementById('rehaEndLabel').textContent = fmtDate(rehaEnd);
+
+    var pct = totalDays > 0 ? Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100)) : 0;
+    document.getElementById('pathFill').style.width = pct + '%';
+    document.getElementById('pathMarker').style.left = pct + '%';
+    document.getElementById('rehaPct').textContent = Math.round(pct) + '% geschafft';
+
+    if (remainingDays <= 0) {
+      document.getElementById('heroCaption').textContent = 'Geschafft. Dein Programm ist vorbei.';
+      document.getElementById('therapieTitle').textContent = 'Du hast es geschafft';
+    }
+  }
+
+  /* Motivation: Clean-Zeit seit Beginn der Entgiftung am 25.08.2026 */
+  var cleanStart = new Date(2026, 7, 25);
+
+  var motivationLines = [
+    "Du bist schon {clean} clean. Willst du das wirklich alles kaputt machen?",
+    "Erinnerst du dich noch, wie schlecht es dir ging?",
+    "Weißt du noch, dass du nach nur drei Wochen Konsum zu nichts mehr fähig warst?",
+    "Du kannst nicht kontrolliert konsumieren. Das ist unmöglich — das weißt du selbst am besten.",
+    "Ich weiß, dir geht’s gerade nicht gut. Ich bin Leon aus der Vergangenheit. Ich weiß, wie schwer es sein kann. Zeig, wie stark du bist.",
+    "Ein Rückfall dauert eine Minute. Der Weg zurück dauert Monate.",
+    "Du hast {clean} gebraucht, um hierher zu kommen. Ein einziges Mal reicht, um wieder bei null anzufangen.",
+    "Denk an die Reha zurück. Willst du da wirklich wieder hin?",
+    "Der Rausch dauert Stunden. Die Scham danach bleibt viel länger.",
+    "Du hast schon einmal geglaubt, du hättest es im Griff. Du hattest es nicht.",
+    "Die Menschen, die gerade stolz auf dich sind — denk kurz an sie, bevor du irgendwas entscheidest.",
+    "Dieser Moment fühlt sich riesig an. In einer Stunde ist er vorbei — wenn du durchhältst.",
+    "Du bist nicht mehr derselbe wie vor {clean}. Lass einen einzigen schlechten Moment dir das nicht wegnehmen.",
+    "Frag dich ehrlich: Willst du konsumieren — oder willst du nur, dass der Schmerz aufhört? Dafür gibt’s einen besseren Weg.",
+    "Ruf jemanden an. Jetzt. Bevor du etwas tust, das du nicht rückgängig machen kannst.",
+    "{clean} clean ist kein Zufall. Das warst du. Bleib bei dir."
+  ];
+
+  var queue = [];
+  function reshuffle() {
+    queue = motivationLines.map(function (_, i) { return i; });
+    for (var i = queue.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = queue[i]; queue[i] = queue[j]; queue[j] = tmp;
+    }
+  }
+  function nextMessage() {
+    if (queue.length === 0) reshuffle();
+    var idx = queue.pop();
+    var cleanDays = Math.max(0, daysBetween(cleanStart, new Date()));
+    var text = motivationLines[idx].split('{clean}').join(formatClean(cleanDays));
+    document.getElementById('motivationCard').textContent = text;
+  }
+
+  function renderMotivation() {
+    var now = new Date();
+    var cleanDays = Math.max(0, daysBetween(cleanStart, now));
+    document.getElementById('cleanNumber').textContent = cleanDays;
+    document.getElementById('cleanCaption').textContent = 'Tage clean seit dem ' + fmtDate(cleanStart);
+  }
+
+  document.getElementById('nextMessageBtn').addEventListener('click', nextMessage);
+
+  renderTherapie();
+  renderMotivation();
+  nextMessage();
+  setInterval(function () { renderTherapie(); renderMotivation(); }, 60000);
+})();
+</script>
+</body>
+</html>
